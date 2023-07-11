@@ -41,6 +41,7 @@ resource "kubernetes_secret_v1" "lacework_k8s_collector_sa" {
   }
 
   type = "kubernetes.io/service-account-token"
+  wait_for_service_account_token = false
 }
 
 resource "kubernetes_cluster_role" "lacework_k8s_collector" {
