@@ -24,11 +24,11 @@ resource "kubernetes_service_account" "lacework_k8s_collector" {
     namespace = var.namespace
   }
   secret {
-    name = "${kubernetes_secret.lacework_k8s_collector.metadata.0.name}"
+    name = "${kubernetes_secret.lacework_k8s_collector_sa.metadata.0.name}"
   }
 }
 
-resource "kubernetes_secret" "lacework_k8s_collector" {
+resource "kubernetes_secret" "lacework_k8s_collector_sa" {
   count = var.enable_cluster_agent ? 1 : 0
 
   metadata {
