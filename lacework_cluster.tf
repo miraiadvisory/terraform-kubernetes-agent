@@ -16,17 +16,27 @@ resource "random_id" "cluster_config_name_tail" {
   }
 }
 
-resource "kubernetes_service_account" "lacework_k8s_collector" {
+resource "kubernetes_service_account_v1" "lacework_k8s_collector" {
   count = var.enable_cluster_agent ? 1 : 0
-
   metadata {
     name      = "${var.lacework_agent_name}-cluster-sa"
     namespace = var.namespace
   }
-
   secret {
-    name = "${kubernetes_secret.lacework_k8s_collector_sa[0].metadata.0.name}"
+    name = "${kubernetes_secret_v1.lacework_k8s_collector_sa[0].metadata.0.name}"
   }
+}
+
+resource "kubernetes_secret_v1" "lacework_k8s_collector_sa" {
+  count = var.enable_cluster_agent ? 1 : 0
+
+  metadata {
+    annotations = {
+      "kubernetes.io/service-account.name" = "${var.lacework_agent_name}-cluster-sa"
+    }
+  }
+
+  type = "kubernetes.io/service-account-token"
 }
 
 resource "kubernetes_secret" "lacework_k8s_collector_sa" {
@@ -72,7 +82,7 @@ resource "kubernetes_cluster_role_binding" "lacework_k8s_collector" {
   }
 
   depends_on = [
-    kubernetes_service_account.lacework_k8s_collector,
+    kubernetes_service_account_v1.lacework_k8s_collector,
     kubernetes_cluster_role.lacework_k8s_collector
   ]
 }
@@ -185,7 +195,7 @@ resource "kubernetes_deployment" "lacework_k8s_collector" {
   }
 
   depends_on = [
-    kubernetes_service_account.lacework_k8s_collector,
+    kubernetes_service_account_v1.lacework_k8s_collector,
     kubernetes_cluster_role.lacework_k8s_collector,
     kubernetes_secret.lacework_k8s_collector,
     kubernetes_cluster_role_binding.lacework_k8s_collector,
