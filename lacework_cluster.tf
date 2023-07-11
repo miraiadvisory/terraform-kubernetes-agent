@@ -25,24 +25,23 @@ resource "kubernetes_service_account_v1" "lacework_k8s_collector" {
   secret {
     name = "${var.lacework_agent_name}-cluster-sa-token"
   }
-  depends_on = [kubernetes_secret_v1.lacework_k8s_collector_sa]
+#  depends_on = [kubernetes_secret_v1.lacework_k8s_collector_sa]
 }
 
-resource "kubernetes_secret_v1" "lacework_k8s_collector_sa" {
-  count = var.enable_cluster_agent ? 1 : 0
+# resource "kubernetes_secret_v1" "lacework_k8s_collector_sa" {
+#   count = var.enable_cluster_agent ? 1 : 0
 
-  metadata {
-    name      = "${var.lacework_agent_name}-cluster-sa-token"
-    namespace = var.namespace
-    annotations = {
-      "kubernetes.io/service-account.name"      = "${var.lacework_agent_name}-cluster-sa"
-      "kubernetes.io/service-account.namespace" = var.namespace
-    }
-  }
+#   metadata {
+#     name      = "${var.lacework_agent_name}-cluster-sa-token"
+#     namespace = var.namespace
+#     annotations = {
+#       "kubernetes.io/service-account.name"      = "${var.lacework_agent_name}-cluster-sa"
+#       "kubernetes.io/service-account.namespace" = var.namespace
+#     }
+#   }
 
-  type = "kubernetes.io/service-account-token"
-  wait_for_service_account_token = false
-}
+#   type = "kubernetes.io/service-account-token"
+# }
 
 resource "kubernetes_cluster_role" "lacework_k8s_collector" {
   count = var.enable_cluster_agent ? 1 : 0
