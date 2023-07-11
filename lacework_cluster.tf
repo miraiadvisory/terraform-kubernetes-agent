@@ -31,21 +31,14 @@ resource "kubernetes_secret_v1" "lacework_k8s_collector_sa" {
   count = var.enable_cluster_agent ? 1 : 0
 
   metadata {
+    name      = "${var.lacework_agent_name}-cluster-sa"
+    namespace = var.namespace
     annotations = {
       "kubernetes.io/service-account.name" = "${var.lacework_agent_name}-cluster-sa"
     }
   }
 
   type = "kubernetes.io/service-account-token"
-}
-
-resource "kubernetes_secret" "lacework_k8s_collector_sa" {
-  count = var.enable_cluster_agent ? 1 : 0
-
-  metadata {
-    name = "${var.lacework_agent_name}-cluster-sa"
-    namespace = var.namespace
-  }
 }
 
 resource "kubernetes_cluster_role" "lacework_k8s_collector" {
