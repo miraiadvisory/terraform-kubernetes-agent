@@ -23,7 +23,7 @@ resource "kubernetes_service_account_v1" "lacework_k8s_collector" {
     namespace = var.namespace
   }
   secret {
-    name = "${kubernetes_secret_v1.lacework_k8s_collector_sa[0].metadata.0.name}"
+    name = kubernetes_secret_v1.lacework_k8s_collector_sa[0].metadata.0.name
   }
 }
 
@@ -34,7 +34,8 @@ resource "kubernetes_secret_v1" "lacework_k8s_collector_sa" {
     name      = "${var.lacework_agent_name}-cluster-sa"
     namespace = var.namespace
     annotations = {
-      "kubernetes.io/service-account.name" = "${var.lacework_agent_name}-cluster-sa"
+      "kubernetes.io/service-account.name"      = "${var.lacework_agent_name}-cluster-sa"
+      "kubernetes.io/service-account.namespace" = var.namespace
     }
   }
 
