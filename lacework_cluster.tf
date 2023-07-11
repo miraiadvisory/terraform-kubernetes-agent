@@ -23,8 +23,9 @@ resource "kubernetes_service_account_v1" "lacework_k8s_collector" {
     namespace = var.namespace
   }
   secret {
-    name = kubernetes_secret_v1.lacework_k8s_collector_sa[0].metadata.0.name
+    name = "${var.lacework_agent_name}-cluster-sa-token"
   }
+  depends_on = [kubernetes_secret_v1.lacework_k8s_collector_sa]
 }
 
 resource "kubernetes_secret_v1" "lacework_k8s_collector_sa" {
